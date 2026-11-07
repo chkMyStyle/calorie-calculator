@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F1F2F4">
+  <meta name="description" content="Рассчитайте стартовую калорийность и БЖУ для похудения или поддержания веса.">
+  <meta http-equiv="Content-Security-Policy" content="connect-src 'none'; form-action 'none'">
+  <title>СИЛА. Калькулятор калорий</title>
+  <link rel="icon" href="./dumbbell.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./calculator.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell">
+      <div class="brand"><img src="./dumbbell.svg" width="36" height="36" alt=""><span>СИЛА<span class="brand-dot">.</span></span></div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="intro">
+      <h1>Калькулятор калорий</h1>
+      <p>Рассчитайте дневную калорийность и БЖУ для вашей цели.</p>
+    </div>
+    <noscript><p class="notice">Включите JavaScript, чтобы воспользоваться калькулятором.</p></noscript>
+
+    <div class="tabs" role="tablist" aria-label="Режим расчёта">
+      <button type="button" id="start-tab" role="tab" aria-selected="true" aria-controls="start-panel"><span aria-hidden="true">01</span> Первичный расчёт</button>
+      <button type="button" id="adjust-tab" role="tab" aria-selected="false" aria-controls="adjust-panel" tabindex="-1"><span aria-hidden="true">02</span> Перерасчёт</button>
+    </div>
+
+    <section id="start-panel" class="workspace" role="tabpanel" aria-labelledby="start-tab">
+      <form id="start-form" class="card form-card" novalidate autocomplete="off" aria-labelledby="start-heading">
+        <h2 id="start-heading">Ваши параметры</h2>
+        <div class="fields">
+          <div class="field">
+            <label for="sex">Пол для формулы</label>
+            <select id="sex" name="sex" required>
+              <option value="" disabled selected>Выберите</option>
+              <option value="male">Мужской</option>
+              <option value="female">Женский</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="age">Возраст, лет</label>
+            <input id="age" name="age" type="text" inputmode="numeric" maxlength="3" placeholder="18+" required>
+          </div>
+          <div class="field">
+            <label for="height">Рост, см</label>
+            <input id="height" name="height" type="text" inputmode="decimal" maxlength="12" placeholder="Например, 175" required>
+          </div>
+          <div class="field">
+            <label for="weight">Текущий вес, кг</label>
+            <input id="weight" name="weight" type="text" inputmode="decimal" maxlength="12" placeholder="Например, 80" required>
+          </div>
+          <div class="field wide">
+            <label for="activity">Повседневная активность</label>
+            <select id="activity" name="activity" aria-describedby="activity-hint" required>
+              <option value="" disabled selected>Выберите уровень</option>
+              <option value="low">Низкая</option>
+              <option value="moderate">Умеренная</option>
+              <option value="high">Высокая</option>
+            </select>
+            <p id="activity-hint" class="hint">Учитывайте ходьбу, работу и тренировки. Коэффициенты приблизительные. Даже при тренировках общая активность может быть невысокой.</p>
+          </div>
+          <div class="field">
+            <label for="goal">Цель</label>
+            <select id="goal" name="goal" required>
+              <option value="lose">Похудение</option>
+              <option value="maintain">Поддержание</option>
+            </select>
+          </div>
+          <div class="field" id="target-field">
+            <label for="target-weight">Целевой вес, кг</label>
+            <input id="target-weight" name="targetWeight" type="text" inputmode="decimal" maxlength="12" placeholder="Например, 75" required>
+          </div>
+        </div>
+        <p id="start-error" class="notice" role="alert" hidden></p>
+        <button class="primary" type="submit">Рассчитать</button>
+      </form>
+      <div id="start-result" class="result-slot" data-label="Стартовая калорийность"></div>
+    </section>
+
+    <section id="adjust-panel" class="workspace" role="tabpanel" aria-labelledby="adjust-tab" hidden>
+      <form id="adjust-form" class="card form-card" novalidate autocomplete="off" aria-labelledby="adjust-heading">
+        <h2 id="adjust-heading">Перерасчёт калорийности</h2>
+        <div class="fields">
+          <div class="field wide">
+            <label for="adjust-calories">Текущая калорийность, ккал/сутки</label>
+            <input id="adjust-calories" name="currentCalories" type="text" inputmode="decimal" maxlength="12" placeholder="Например, 2000" required>
+          </div>
+          <div class="field">
+            <label for="adjust-weight">Текущий вес, кг</label>
+            <input id="adjust-weight" name="weight" type="text" inputmode="decimal" maxlength="12" placeholder="Например, 80" required>
+          </div>
+          <div class="field">
+            <label for="adjust-target">Целевой вес, кг</label>
+            <input id="adjust-target" name="targetWeight" type="text" inputmode="decimal" maxlength="12" placeholder="Например, 75" required>
+          </div>
+          <div class="field wide">
+            <label for="correction">Корректировка</label>
+            <select id="correction" name="correction">
+              <option value="0">Без изменений</option>
+              <option value="-5">−5%</option>
+              <option value="-10">−10%</option>
+              <option value="5">+5%</option>
+              <option value="10">+10%</option>
+            </select>
+          </div>
+        </div>
+        <p id="adjust-error" class="notice" hidden></p>
+        <p class="hint adjust-hint">Калории и БЖУ пересчитываются при изменении значений.</p>
+      </form>
+      <div id="adjust-result" class="result-slot" data-label="Новая калорийность"></div>
+    </section>
+
+    <section id="check-guide" class="card guide" aria-labelledby="guide-heading" hidden>
+      <h2 id="guide-heading">Как проверить свою калорийность</h2>
+      <ol>
+        <li>Начните с рассчитанной калорийности.</li>
+        <li>Взвешивайтесь регулярно в одинаковых условиях, желательно утром.</li>
+        <li>Рассчитывайте средний вес за последние 7 дней.</li>
+        <li>Сравнивайте средние показатели последовательных недель.</li>
+        <li>Если за 2–3 недели нет ожидаемой тенденции, проверьте учёт питания и активность. При необходимости скорректируйте калорийность.</li>
+      </ol>
+      <p class="hint">По одному взвешиванию нельзя надёжно судить об изменении жировой массы.</p>
+    </section>
+
+    <footer>
+      <p>Расчёт предназначен для ориентировочной оценки потребности в энергии у взрослых. Не заменяет индивидуальные рекомендации специалиста.</p>
+      <p>При беременности, грудном вскармливании, расстройствах пищевого поведения и заболеваниях, влияющих на питание и обмен веществ, стандартные расчёты могут быть неприменимы.</p>
+      <p>Все вычисления выполняются в браузере.</p>
+    </footer>
+  </main>
+
+  <template id="result-template">
+    <section class="card result-card">
+      <div class="result-header">
+        <h2 class="result-title" tabindex="-1"></h2>
+        <p class="calories"><strong data-value="calories">—</strong> <span>ккал / день</span></p>
+        <p class="result-context" hidden></p>
+      </div>
+      <div class="result-body">
+        <h3>БЖУ на день</h3>
+        <dl class="macros">
+          <div><dt>Белки</dt><dd><strong data-value="protein">—</strong> г</dd></div>
+          <div><dt>Жиры</dt><dd><strong data-value="fat">—</strong> г</dd></div>
+          <div><dt>Углеводы</dt><dd><strong data-value="carbs">—</strong> г</dd></div>
+        </dl>
+        <p class="result-note hint">Заполните поля, чтобы увидеть результат.</p>
+        <button class="secondary copy" type="button" disabled>
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+          Скопировать КБЖУ
+        </button>
+        <p class="copy-status hint" role="status" hidden></p>
+        <div class="manual-copy field" hidden>
+          <label>Текст для копирования<textarea rows="4" readonly></textarea></label>
+        </div>
+        <details>
+          <summary>Как рассчитаны БЖУ</summary>
+          <p>Белки: 1,8 г на кг целевого веса (справочный диапазон 1,6–2,0 г/кг). При поддержании веса используется текущий вес.</p>
+          <p>Жиры: 0,7 г на кг текущего веса (справочный диапазон 0,5–0,9 г/кг).</p>
+          <p>Углеводы рассчитываются из оставшихся калорий. В одном грамме белка и углеводов по 4 ккал, в одном грамме жиров 9 ккал.</p>
+        </details>
+      </div>
+    </section>
+  </template>
+  <div id="announcer" class="sr-only" role="status" aria-atomic="true"></div>
+</body>
+</html>
