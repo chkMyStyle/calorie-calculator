@@ -2,6 +2,7 @@ const CalorieCalculator = (() => {
   const activityFactors = Object.freeze({ low: 1.20, moderate: 1.45, high: 1.70 });
   const corrections = Object.freeze([0, -5, -10, 5, 10]);
   const minimumCalories = 1000;
+  const energyPerGram = { protein: 4, fat: 9, carbs: 4 };
 
   class CalculationError extends Error {
     constructor(message, field) {
@@ -45,16 +46,23 @@ const CalorieCalculator = (() => {
     return bmrFromProfile(readProfile(input));
   }
 
+  function calculateCaloriesFromMacros({ protein, fat, carbs }) {
+    const proteinGrams = readNumber(protein, 'protein', 0, 10000, 'Укажите количество белков от 0 до 10 000 г.');
+    const fatGrams = readNumber(fat, 'fat', 0, 10000, 'Укажите количество жиров от 0 до 10 000 г.');
+    const carbGrams = readNumber(carbs, 'carbs', 0, 10000, 'Укажите количество углеводов от 0 до 10 000 г.');
+    return proteinGrams * energyPerGram.protein + fatGrams * energyPerGram.fat + carbGrams * energyPerGram.carbs;
+  }
+
   function calculateMacros(calories, weight, targetWeight) {
     const rawProtein = targetWeight * 1.8;
     const rawFat = weight * 0.7;
     const protein = Math.round(rawProtein);
     const fat = Math.round(rawFat);
-    const remaining = calories - rawProtein * 4 - rawFat * 9;
-    if (remaining < -1e-9 || protein * 4 + fat * 9 > calories) {
+    const remaining = calories - rawProtein * energyPerGram.protein - rawFat * energyPerGram.fat;
+    if (remaining < -1e-9 || protein * energyPerGram.protein + fat * energyPerGram.fat > calories) {
       throw new CalculationError('Белки и жиры не помещаются в эту калорийность. Проверьте вес и выбранную цель или корректировку.');
     }
-    const carbs = Math.round(Math.max(0, remaining) / 4);
+    const carbs = Math.round(Math.max(0, remaining) / energyPerGram.carbs);
     return { protein, fat, carbs };
   }
 
@@ -109,7 +117,7 @@ const CalorieCalculator = (() => {
     return { currentCalories: calories, weight, targetWeight, correction: 0 };
   }
 
-  return { CalculationError, calculateBmr, calculateInitial, recalculate, prefillAdjustment };
+  return { CalculationError, calculateBmr, calculateInitial, recalculate, prefillAdjustment, calculateCaloriesFromMacros };
 })();
 
 if (typeof module === 'object' && module.exports) {

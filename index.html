@@ -8,9 +8,9 @@
   <meta http-equiv="Content-Security-Policy" content="connect-src 'none'; form-action 'none'">
   <title>СИЛА. Калькулятор калорий</title>
   <link rel="icon" href="./dumbbell.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css">
-  <script src="./calculator.js" defer></script>
-  <script src="./app.js" defer></script>
+  <link rel="stylesheet" href="./style.css?v=2">
+  <script src="./calculator.js?v=2" defer></script>
+  <script src="./app.js?v=2" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -29,6 +29,7 @@
     <div class="tabs" role="tablist" aria-label="Режим расчёта">
       <button type="button" id="start-tab" role="tab" aria-selected="true" aria-controls="start-panel">Первичный расчёт</button>
       <button type="button" id="adjust-tab" role="tab" aria-selected="false" aria-controls="adjust-panel" tabindex="-1">Перерасчёт</button>
+      <button type="button" id="macros-tab" role="tab" aria-selected="false" aria-controls="macros-panel" tabindex="-1">По БЖУ</button>
     </div>
 
     <section id="start-panel" class="workspace" role="tabpanel" aria-labelledby="start-tab">
@@ -114,6 +115,38 @@
         <p class="hint adjust-hint">Калории и БЖУ пересчитываются при изменении значений.</p>
       </form>
       <div id="adjust-result" class="result-slot" data-label="Новая калорийность"></div>
+    </section>
+
+    <section id="macros-panel" class="workspace" role="tabpanel" aria-labelledby="macros-tab" hidden>
+      <form id="macros-form" class="card form-card" novalidate autocomplete="off" aria-labelledby="macros-heading">
+        <h2 id="macros-heading">Калорийность по БЖУ</h2>
+        <div class="fields macro-fields">
+          <div class="field">
+            <label for="macro-protein">Белки, г</label>
+            <input id="macro-protein" name="protein" type="text" inputmode="decimal" maxlength="12" required>
+          </div>
+          <div class="field">
+            <label for="macro-fat">Жиры, г</label>
+            <input id="macro-fat" name="fat" type="text" inputmode="decimal" maxlength="12" required>
+          </div>
+          <div class="field wide">
+            <label for="macro-carbs">Углеводы, г</label>
+            <input id="macro-carbs" name="carbs" type="text" inputmode="decimal" maxlength="12" required>
+          </div>
+        </div>
+        <p id="macros-error" class="notice" hidden></p>
+        <p class="hint adjust-hint">Если какого-то макронутриента нет, введите 0.</p>
+      </form>
+
+      <section class="card result-card" aria-labelledby="macros-result-heading">
+        <div class="result-header">
+          <h2 id="macros-result-heading" class="result-title">Общая калорийность</h2>
+          <p class="calories"><strong id="macros-calories">—</strong> <span>ккал</span></p>
+        </div>
+        <div class="result-body">
+          <p class="hint">Белки и углеводы дают по 4 ккал на грамм, жиры дают 9 ккал на грамм.</p>
+        </div>
+      </section>
     </section>
 
     <section id="check-guide" class="card guide" aria-labelledby="guide-heading" hidden>

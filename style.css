@@ -32,7 +32,7 @@ h1 { font-size: clamp(29px, 5vw, 49px); letter-spacing: -.045em; line-height: 1.
 h2 { font-size: 22px; line-height: 1.2; letter-spacing: -.025em; }
 h3 { font-size: 16px; }
 
-.tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; }
+.tabs { display: grid; grid-template-columns: repeat(3, minmax(min-content, 1fr)); gap: 4px; padding: 4px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; }
 .tabs button { min-height: 54px; border: 0; border-radius: 8px; background: transparent; font-weight: 700; line-height: 1.15; padding: 7px 4px; }
 .tabs button:hover { background: var(--canvas); }
 .tabs button[aria-selected="true"] { background: var(--accent); }
@@ -64,6 +64,7 @@ textarea { margin-top: 5px; resize: vertical; }
 .result-title:focus-visible { outline-color: var(--accent); }
 .calories { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 9px; margin-top: 8px; }
 .calories strong { font-size: clamp(45px, 8vw, 68px); font-weight: 800; letter-spacing: -.05em; line-height: 1; font-variant-numeric: tabular-nums; }
+#macros-calories { font-size: clamp(42px, 5.5vw, 68px); }
 .calories span { font-size: 16px; color: #E1E4E8; }
 .result-context { margin-top: 12px; padding-top: 11px; border-top: 1px solid #4C535C; color: #F3F4F6; }
 .result-body { padding: 16px; }
@@ -86,6 +87,8 @@ footer p + p { margin-top: 8px; }
 
 @media (min-width: 520px) {
   .shell { width: calc(100% - 40px); }
+  .macro-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .macro-fields .wide { grid-column: auto; }
   .form-card, .result-header, .result-body, .guide { padding: 22px; }
   .fields { gap: 16px; }
 }

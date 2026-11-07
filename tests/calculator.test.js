@@ -6,6 +6,7 @@ const {
   calculateInitial,
   recalculate,
   prefillAdjustment,
+  calculateCaloriesFromMacros,
 } = require('../calculator.js');
 
 const profile = { sex: 'male', age: 30, height: 180, weight: 90, targetWeight: 80, activity: 'low', goal: 'lose' };
@@ -118,4 +119,22 @@ test('Перерасчёт работает с введёнными вручну
   assert.deepEqual(recalculate(adjustment), {
     correction: 0, calories: 2000, protein: 144, fat: 63, carbs: 214,
   });
+});
+
+test('Калорийность по БЖУ использует коэффициенты 4, 9 и 4 ккал/г', () => {
+  assert.equal(calculateCaloriesFromMacros({ protein: 30, fat: 20, carbs: 50 }), 500);
+});
+
+test('Расчёт по БЖУ принимает нули, запятую и точку', () => {
+  assert.equal(calculateCaloriesFromMacros({ protein: '0', fat: '2,5', carbs: '10.25' }), 63.5);
+  assert.equal(calculateCaloriesFromMacros({ protein: 0, fat: 0, carbs: 0 }), 0);
+});
+
+test('Расчёт по БЖУ отклоняет пустые, отрицательные и некорректные значения', () => {
+  const macros = { protein: 30, fat: 20, carbs: 50 };
+  for (const [field, value] of [['protein', ''], ['fat', '-1'], ['carbs', '10 г'], ['carbs', 10001]]) {
+    assert.throws(() => calculateCaloriesFromMacros({ ...macros, [field]: value }), {
+      name: 'CalculationError', field,
+    });
+  }
 });

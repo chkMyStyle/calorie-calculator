@@ -1,5 +1,5 @@
 (() => {
-  const { CalculationError, calculateInitial, recalculate, prefillAdjustment } = CalorieCalculator;
+  const { CalculationError, calculateInitial, recalculate, prefillAdjustment, calculateCaloriesFromMacros } = CalorieCalculator;
   const format = new Intl.NumberFormat('ru-RU');
   const activityDescriptions = {
     low: 'Преимущественно сидячая работа, мало ходьбы и бытовой активности.',
@@ -8,8 +8,11 @@
   };
   const startForm = document.getElementById('start-form');
   const adjustForm = document.getElementById('adjust-form');
+  const macrosForm = document.getElementById('macros-form');
   const startError = document.getElementById('start-error');
   const adjustError = document.getElementById('adjust-error');
+  const macrosError = document.getElementById('macros-error');
+  const macrosCalories = document.getElementById('macros-calories');
   const guide = document.getElementById('check-guide');
   const announcer = document.getElementById('announcer');
   const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
@@ -106,7 +109,12 @@
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => selectTab(tab));
     tab.addEventListener('keydown', (event) => {
-      const next = { ArrowLeft: 1 - index, ArrowRight: 1 - index, Home: 0, End: 1 }[event.key];
+      const next = {
+        ArrowLeft: (index - 1 + tabs.length) % tabs.length,
+        ArrowRight: (index + 1) % tabs.length,
+        Home: 0,
+        End: tabs.length - 1,
+      }[event.key];
       if (next === undefined) return;
       event.preventDefault();
       selectTab(tabs[next], true);
@@ -169,6 +177,24 @@
     }
   }
 
+  function updateMacrosCalories(announce = false) {
+    clearError(macrosForm, macrosError);
+    macrosCalories.textContent = '—';
+    const input = Object.fromEntries(new FormData(macrosForm));
+    if (Object.values(input).some((value) => !value.trim())) {
+      if (announce) announcer.textContent = 'Заполните три поля БЖУ.';
+      return;
+    }
+    try {
+      const calories = format.format(calculateCaloriesFromMacros(input));
+      macrosCalories.textContent = calories;
+      if (announce) announcer.textContent = `Общая калорийность: ${calories} ккал.`;
+    } catch (error) {
+      showError(macrosForm, macrosError, error);
+      if (announce) announcer.textContent = error.message;
+    }
+  }
+
   startForm.addEventListener('input', () => {
     clearError(startForm, startError);
     updateStartFields();
@@ -207,6 +233,12 @@
   adjustForm.addEventListener('submit', (event) => {
     event.preventDefault();
     updateAdjustment(true);
+  });
+  macrosForm?.addEventListener('input', () => updateMacrosCalories());
+  macrosForm?.addEventListener('change', () => updateMacrosCalories(true));
+  macrosForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    updateMacrosCalories(true);
   });
   updateStartFields();
   updateAdjustment();
