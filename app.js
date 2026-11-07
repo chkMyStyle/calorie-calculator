@@ -160,7 +160,7 @@
       const summary = result.correction
         ? `Корректировка ${result.correction < 0 ? '−' : '+'}${Math.abs(result.correction)}%`
         : 'Калорийность без изменений';
-      adjustView.render(result, summary, 'Используйте средний вес за неделю, чтобы оценить изменения.');
+      adjustView.render(result, summary, 'Чтобы оценить изменения веса, сравнивайте результаты взвешиваний в одинаковых условиях.');
       if (announce) announcer.textContent = resultText(result);
     } catch (error) {
       showError(adjustForm, adjustError, error);
