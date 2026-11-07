@@ -34,7 +34,6 @@ h3 { font-size: 16px; }
 
 .tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; }
 .tabs button { min-height: 54px; border: 0; border-radius: 8px; background: transparent; font-weight: 700; line-height: 1.15; padding: 7px 4px; }
-.tabs button span { display: block; margin-bottom: 3px; font-size: 13px; font-variant-numeric: tabular-nums; }
 .tabs button:hover { background: var(--canvas); }
 .tabs button[aria-selected="true"] { background: var(--accent); }
 
@@ -87,7 +86,6 @@ footer p + p { margin-top: 8px; }
 
 @media (min-width: 520px) {
   .shell { width: calc(100% - 40px); }
-  .tabs button span { display: inline; margin-right: 5px; }
   .form-card, .result-header, .result-body, .guide { padding: 22px; }
   .fields { gap: 16px; }
 }
